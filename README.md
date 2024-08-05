@@ -2,6 +2,8 @@
 
 App for movies
 
+Architecture `Domain Driven Design` (incomplete)
+
 Para API y TOKEN
 
 [The Movie DB](https://www.themoviedb.org/)

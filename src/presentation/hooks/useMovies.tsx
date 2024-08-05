@@ -17,7 +17,6 @@ export const useMovies = () => {
   }, [])
 
   const initialLoad = async () => {
-    setIsLoading(true);
     const promises = [
       UseCases.moviesNowPlayingUseCase(movieDbFetcher),
       UseCases.moviesUpComingUseCase(movieDbFetcher),
@@ -36,6 +35,7 @@ export const useMovies = () => {
     setUpcoming(upcomingMovies);
     setTopRated(topRatedMovies);
     setPopular(popularMovies);
+
     setIsLoading(false);
   }
 
