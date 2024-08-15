@@ -19,8 +19,7 @@ export const PosterCarousel = ({ height = 440, movies }: Props) => {
         {
           movies.map(movie => (
             <View key={movie.id}>
-              <Text>{movie.title}</Text>
-              <MoviePoster path={movie.poster} />
+              <MoviePoster movie={movie} />
             </View>
           ))
         }

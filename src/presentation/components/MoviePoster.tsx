@@ -1,20 +1,47 @@
-import React from 'react'
-import { Image, StyleSheet, View } from 'react-native';
+import React from 'react';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { Image, ImageBackground, Pressable, StyleSheet, View } from 'react-native';
+import { IMovie } from '../../core/entities/movie.entity';
+import { RootStackParams } from '../navigation/Navigation';
 
 interface Props {
-  path: string;
+  movie: IMovie;
+  height?: number;
+  width?: number;
 }
 
-export const MoviePoster = ({ path = '' }: Props) => {
+export const MoviePoster = ({ movie, height = 420, width = 300 }: Props) => {
+
+  // 'Type' strict for remember the routes available
+  const navigation = useNavigation<NavigationProp<RootStackParams>>();
+
   return (
-    <View style={{...Styles.imageContainer, width: 300, height: 400}} >
-      <Image
+    <Pressable
+      onPress={() => navigation.navigate('Details', { movieId: movie.id })}
+      // style={{ ...Styles.imageContainer, width, height }}
+      style={ ({ pressed }) => ({
+        ...Styles.imageContainer,
+        width,
+        height,
+        marginHorizontal: 8,
+        paddingBottom: 8,
+        paddingHorizontal: 5,
+        opacity: pressed ? 0.9 : 1,
+      })
+    }
+    >
+      <View
         style={Styles.image}
-        source={{ uri: path }}
-      />
-    </View>
-  )
-}
+      >
+        <Image
+          style={Styles.image}
+          source={{ uri: movie?.poster }}
+        />
+      </View>
+    </Pressable>
+
+  );
+};
 
 const Styles = StyleSheet.create({
   image: {
@@ -25,14 +52,13 @@ const Styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
     borderRadius: 18,
-    // backgroundColor: 'white',
-    shadowColor: "#000",
+    shadowColor: "rgba(0, 0, 0, 0.82)",
     shadowOffset: {
       width: 0,
       height: 7,
     },
-    shadowOpacity: 0.24,
-    shadowRadius: 7,
-    elevation: 9,
+    // shadowOpacity: 0.24,
+    // shadowRadius: 7,
+    elevation: 4,
   }
-})
+});
