@@ -1,6 +1,6 @@
-import React from 'react';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { Image, ImageBackground, Pressable, StyleSheet, View } from 'react-native';
+import React from 'react';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { IMovie } from '../../core/entities/movie.entity';
 import { RootStackParams } from '../navigation/Navigation';
 
@@ -9,6 +9,8 @@ interface Props {
   height?: number;
   width?: number;
 }
+
+// NOTE - This componente was refactored for me.
 
 export const MoviePoster = ({ movie, height = 420, width = 300 }: Props) => {
 

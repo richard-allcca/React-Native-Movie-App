@@ -4,6 +4,8 @@ import type { IMovie } from "../../core/entities/movie.entity";
 import { movieDbFetcher } from "../../config/adapters/movieDbFetcher";
 import * as UseCases from './../../core/use-cases';
 
+let popularPageNumber = 1;
+
 export const useMovies = () => {
 
   const [isLoading, setIsLoading] = useState(true);
@@ -39,11 +41,19 @@ export const useMovies = () => {
     setIsLoading(false);
   }
 
+  const loadMorePopularMovies = async () => {
+    popularPageNumber++;
+    const movies = await UseCases.moviesPopularPlayingUseCase(movieDbFetcher, { page: popularPageNumber });
+    setNowPlaying(prev => [...prev, ...movies]);
+  }
+
   return {
     isLoading,
     nowPlaying,
     upcoming,
     topRated,
-    popular
+    popular,
+
+    loadMorePopularMovies
   }
 }
