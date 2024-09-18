@@ -1,5 +1,6 @@
-import type{ IMovie } from "../../core/entities/movie.entity";
-import type { IResult } from "../interfaces/movie-db.responses";
+import type{ IFullMovie, IMovie } from "../../core/entities/movie.entity";
+import { IMovieDbByIdResponse } from "../interfaces/movie-db-by-id-response";
+import type { IResult } from "../interfaces/movie-db-responses";
 
 
 export class MovieMapper {
@@ -17,4 +18,14 @@ export class MovieMapper {
     }
   }
 
+  static fromMovieDBToEntity(movie: IMovieDbByIdResponse): IFullMovie {
+    return {
+      ...this.fromMovieDbResultToEntity(movie),
+      genres: movie.genres.map((g) => g.name),
+      duration: movie.runtime,
+      budget: movie.budget, // presupuesto
+      originalTitle: movie.original_title,
+      productionsCompany: movie.production_companies.map(pc => pc.name)
+    }
+  }
 }

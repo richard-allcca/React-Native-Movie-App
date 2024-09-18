@@ -38,7 +38,7 @@ export interface IUpComingResponse {
 export interface IResult {
   adult:             boolean;
   backdrop_path:     string;
-  genre_ids:         number[];
+  genre_ids?:         number[];
   id:                number;
   original_language: OriginalLanguage;
   original_title:    string;

@@ -2,6 +2,15 @@
 
 App for movies
 
+Para correr en local
+
+```bash
+  npm install
+  npm run start
+```
+
+> Asegúrate de tener corriendo un emulador de dispositivo Android
+
 Architecture `Domain Driven Design` (incomplete)
 
 Para API y TOKEN
@@ -70,4 +79,42 @@ Dark mode
 
 ```jsx
   const isDarkMode = useColorScheme() === 'dark';
+```
+
+## Dotenv settings
+
+```bash
+  npm i -D react-native-dotenv
+```
+
+Agregar el plugin en babel.config.js
+
+```js
+  module.exports = {
+  presets: ['module:@react-native/babel-preset'],
+  plugins: [
+    [
+      "module:react-native-dotenv",
+      {
+        envName: "APP_ENV",
+        moduleName: "@env",
+        path: ".env",
+        // blacklist: null,
+        // whitelist: null,
+        // safe: false,
+        // allowUndefined: true
+      }
+
+    ]
+    // NOTE - Si utilizas algún plugin de react-native siempre es el ultimo
+  ]
+};
+```
+
+Crear el archivo de types/env.d.ts para dotenv con typescript
+
+```ts
+  declare module '@env' {
+    export const YOUR_VARIABLE_NAME: string;
+  }
 ```

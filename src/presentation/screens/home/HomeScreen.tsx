@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PosterCarousel } from '../../components/PosterCarousel';
 import { HorizontalCarousel } from '../../components/movies/HorizontalCarousel';
 import { useMovies } from '../../hooks/useMovies';
+import { FullScreenLoader } from '../../components/loaders/FullScreenLoader';
 
 export const HomeScreen = () => {
   // Necesario para dar espacio en el top del area segura
@@ -14,7 +15,7 @@ export const HomeScreen = () => {
     nowPlaying, upcoming, topRated, popular, isLoading, loadMorePopularMovies
   } = useMovies();
 
-  if(isLoading) return (<Text>Loading...</Text>)
+  if(isLoading) return <FullScreenLoader/>
 
   return (
     <ScrollView>

@@ -1,5 +1,5 @@
 import { HttpAdapter } from "../../../config/adapters/http/http.adapter";
-import type { ITopRatedResponse } from "../../../infrastructure/interfaces/movie-db.responses";
+import type { ITopRatedResponse } from "../../../infrastructure/interfaces/movie-db-responses";
 import { MovieMapper } from "../../../infrastructure/mappers/movie.mapper";
 import type { IMovie } from "../../entities/movie.entity";
 
