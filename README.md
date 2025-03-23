@@ -1,19 +1,20 @@
-# Init
+# Movies App
 
-App for movies
+## Pasos iniciales
 
-Para correr en local
+Asegúrate de que el dispositivo tenga el SDK 34
+
+Debes tener el dispositivo corriendo
+
+Comando para correr en local
 
 ```bash
-  npm install
   npm run start
 ```
 
-> Asegúrate de tener corriendo un emulador de dispositivo Android
+## Architecture `Domain Driven Design` (incomplete)
 
-Architecture `Domain Driven Design` (incomplete)
-
-Para API y TOKEN
+Para obtener API y TOKEN
 
 [The Movie DB](https://www.themoviedb.org/)
 
@@ -73,14 +74,6 @@ Para API y TOKEN
   import 'react-native-gesture-handler';
 ```
 
-## Notes
-
-Dark mode
-
-```jsx
-  const isDarkMode = useColorScheme() === 'dark';
-```
-
 ## Dotenv settings
 
 ```bash
@@ -117,4 +110,12 @@ Crear el archivo de types/env.d.ts para dotenv con typescript
   declare module '@env' {
     export const YOUR_VARIABLE_NAME: string;
   }
+```
+
+### Notes
+
+Dark mode
+
+```jsx
+  const isDarkMode = useColorScheme() === 'dark';
 ```
