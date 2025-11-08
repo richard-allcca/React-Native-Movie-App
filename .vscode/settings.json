@@ -19,5 +19,10 @@
     "titleBar.inactiveForeground": "#15202b99"
   },
   "peacock.color": "#00d8ff",
-  "java.compile.nullAnalysis.mode": "automatic"
+  "java.compile.nullAnalysis.mode": "automatic",
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "file": ".github/instructions/commit-messages.instructions.md"
+    }
+  ]
 }

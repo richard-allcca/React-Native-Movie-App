@@ -2,47 +2,66 @@
 
 Aplicación móvil para explorar películas usando la API de The Movie DB, desarrollada con React Native y arquitectura Domain Driven Design (DDD).
 
-## Arquitectura recomendada
+## Arquitectura utilizada
+
+Generated on: 8/14/2025, 11:03:34 PM
+Root path: `c:\Repos\React-native\03-moviesApp\src`
+node: 20.10.0
 
 ```md
-src/
-├── domain/
-│   ├── video/
-│   │   ├── entities/
-│   │   ├── valueObjects/
-│   │   ├── repositories/
-│   │   └── services/
-│   ├── user/
-│   │   ├── entities/
-│   │   ├── valueObjects/
-│   │   ├── repositories/
-│   │   └── services/
-│   └── shared/
-│       ├── types/
-│       └── utils/
-├── application/
-│   ├── useCases/
-│   │   ├── uploadVideo/
-│   │   ├── followUser/
-│   │   └── likeVideo/
-│   └── dto/
-├── infrastructure/
-│   ├── api/
-│   ├── storage/
-│   ├── database/
-│   └── notifications/
-├── presentation/
-│   ├── screens/
-│   │   ├── Home/
-│   │   ├── Profile/
-│   │   └── VideoPlayer/
-│   ├── components/
-│   ├── navigation/
-│   └── theme/
-├── config/
-│   ├── env/
-│   └── constants/
-└── main.tsx
+├── 📁 config/
+│   ├── 📁 adapters/
+│   │   ├── 📁 http/
+│   │   │   ├── 📄 axios.adapter.ts
+│   │   │   └── 📄 http.adapter.ts
+│   │   └── 📄 movieDbFetcher.ts
+│   └── 📁 helpers/
+│       └── 📄 formatter.ts
+├── 📁 core/
+│   ├── 📁 entities/
+│   │   ├── 📄 cast.entity.ts
+│   │   └── 📄 movie.entity.ts
+│   └── 📁 use-cases/
+│       ├── 📁 movie/
+│       │   ├── 📄 get-by-id.use-case.ts
+│       │   └── 📄 get-cast.use-case.ts
+│       ├── 📁 movies/
+│       │   ├── 📄 now_playing.use-case.ts
+│       │   ├── 📄 popular.use-case.ts
+│       │   ├── 📄 top_rated.use-case.ts
+│       │   └── 📄 up_coming.use-case.ts
+│       └── 📄 index.ts
+├── 📁 infrastructure/
+│   ├── 📁 interfaces/
+│   │   ├── 📄 movie-db-by-id-response.ts
+│   │   ├── 📄 movie-db-cast-response.ts
+│   │   └── 📄 movie-db-responses.ts
+│   └── 📁 mappers/
+│       ├── 📄 cast.mapper.ts
+│       └── 📄 movie.mapper.ts
+└── 📁 presentation/
+    ├── 📁 components/
+    │   ├── 📁 cast/
+    │   │   └── 📄 CastActor.tsx
+    │   ├── 📁 loaders/
+    │   │   └── 📄 FullScreenLoader.tsx
+    │   ├── 📁 movie/
+    │   │   ├── 📄 MovieDetails.tsx
+    │   │   └── 📄 MovieHeader.tsx
+    │   ├── 📁 movies/
+    │   │   └── 📄 HorizontalCarousel.tsx
+    │   ├── 📄 MoviePoster.tsx
+    │   └── 📄 PosterCarousel.tsx
+    ├── 📁 hooks/
+    │   ├── 📄 useMovie.tsx
+    │   └── 📄 useMovies.tsx
+    ├── 📁 navigation/
+    │   └── 📄 Navigation.tsx
+    └── 📁 screens/
+        ├── 📁 details/
+        │   └── 📄 DetailsScreens.tsx
+        └── 📁 home/
+            └── 📄 HomeScreen.tsx
 ```
 
 ## Tabla de Contenido
@@ -51,15 +70,19 @@ src/
 2. [Requisitos Previos](#requisitos-previos)
 3. [Instalación](#instalación)
 4. [Configuración de Entorno](#configuración-de-entorno)
-5. [Ejecución de la App](#ejecución-de-la-app)
-6. [Navegación y Dependencias](#navegación-y-dependencias)
-7. [Notas y Consejos](#notas-y-consejos)
+5. [Navegación y Dependencias](#navegación-y-dependencias)
+6. [Notas y Consejos](#notas-y-consejos)
 
 ---
 
 ## Introducción
 
 Esta app permite consultar información de películas, ver detalles, elencos y navegar entre diferentes categorías usando la API de [The Movie DB](https://www.themoviedb.org/).
+
+## Enlaces Útiles
+
+- [Documentación de la API de The Movie DB](https://developer.themoviedb.org/reference/getting-started)
+- [Documentación de React Native](https://reactnative.dev/docs/getting-started)
 
 ## Requisitos Previos
 
@@ -80,108 +103,113 @@ yarn install
 
 ## Configuración de Entorno
 
-1. Regístrate y obtén tu API KEY en [The Movie DB](https://www.themoviedb.org/).
-2. Crea un archivo `.env` en la raíz del proyecto y agrega tu variable:
+  1. Regístrate y obtén tu API KEY y TOKEN en [The Movie DB](https://www.themoviedb.org/).
 
-```env
-API_KEY=tu_api_key_aqui
-```
+      Dentro de tu cuenta, ve a Perfil > API para generar tus credenciales.
 
-3. Instala dotenv:
+  2. Crea un archivo `.env` en la raíz del proyecto y agrega tu variable:
 
-```bash
-npm i -D react-native-dotenv
-```
+      ```env
+      THE_MOVIE_DB_KEY: tu_api_key_aquí
+      THE_MOVIE_DB_TOKEN: tu_token_aquí
+      ```
 
-4. Configura el plugin en `babel.config.js`:
+  3. Instala dotenv:
 
-```js
-module.exports = {
-  presets: ['module:@react-native/babel-preset'],
-  plugins: [
-    [
-      'module:react-native-dotenv',
-      {
-        envName: 'APP_ENV',
-        moduleName: '@env',
-        path: '.env',
-      },
-    ],
-    // NOTA: Si usas otros plugins de react-native, este debe ir al final
-  ],
-};
-```
+      ```bash
+      npm i -D react-native-dotenv
+      ```
 
-5. (Opcional) Si usas TypeScript, crea `types/env.d.ts`:
+  4. Configura el plugin en `babel.config.js`:
 
-```ts
-declare module '@env' {
-  export const API_KEY: string;
-}
-```
+      ```js
+      module.exports = {
+        presets: ['module:@react-native/babel-preset'],
+        plugins: [
+          [
+            'module:react-native-dotenv',
+            {
+              envName: 'APP_ENV',
+              moduleName: '@env',
+              path: '.env',
+            },
+          ],
+          // NOTA: Si usas otros plugins de react-native, este debe ir al final
+        ],
+      };
+      ```
 
-## Ejecución de la App
+  5. (Opcional) Si usas TypeScript, crea `types/env.d.ts`:
 
-Para iniciar el proyecto en modo desarrollo:
+      ```ts
+      declare module '@env' {
+        export const API_KEY: string;
+      }
+      ```
 
-```bash
-npm run start
-# o
-yarn start
-```
+  6. Ejecución de la App
+
+      Para iniciar el proyecto en modo desarrollo:
+
+      ```bash
+      npm run start
+      # o
+      yarn start
+      ```
 
 ## Navegación y Dependencias
 
-### Instalación de React Navigation
+  1. Instalación de React Navigation.
 
-Sigue la [documentación oficial](https://reactnavigation.org/):
+     Sigue la [documentación oficial](https://reactnavigation.org/)
 
-```bash
-npm install @react-navigation/native
-npm install react-native-screens react-native-safe-area-context
-```
+      ```bash
+        npm install @react-navigation/native
+        npm install react-native-screens react-native-safe-area-context
+      ```
 
-#### Configuración Adicional para Android
+  2. Configuración Adicional para Android
 
-Edita `MainActivity.kt` o `MainActivity.java` en `android/app/src/main/java/<tu paquete>/`:
+      Edita `MainActivity.kt` o `MainActivity.java` en `android/app/src/main/java/<tu paquete>/`:
 
-```kotlin
-import android.os.Bundle
+      ```kotlin
+      import android.os.Bundle
 
-class MainActivity: ReactActivity() {
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(null)
-  }
-}
-```
+      class MainActivity: ReactActivity() {
+      override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(null)
+      }
+      }
+      ```
 
-#### Envolviendo la App con NavigationContainer
+  3. Envolviendo la App con NavigationContainer
 
-```tsx
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+      ```tsx
+        import * as React from 'react';
+        import { NavigationContainer } from '@react-navigation/native';
 
-export default function App() {
-  return (
-    <NavigationContainer>{/* Resto de tu app */}</NavigationContainer>
-  );
-}
+        export default function App() {
+          return (
+            <NavigationContainer>
+              {/* Resto de tu app */}
+            </NavigationContainer>
+          );
+        }
+      ```
 
-```
+  4. Stack Navigation y Gestos
 
-### Stack Navigation y Gestos
+      ```bash
+      npm install @react-navigation/stack
+      npm install react-native-gesture-handler
+      npm install @react-native-masked-view/masked-view
+      ```
 
-```bash
-npm install @react-navigation/stack
-npm install react-native-gesture-handler
-npm install @react-native-masked-view/masked-view
-```
+      Agrega al inicio de tu archivo de entrada (`index.js` o `App.js`):
 
-Agrega al inicio de tu archivo de entrada (`index.js` o `App.js`):
-
-```js
-import 'react-native-gesture-handler';
-```
+      ```js
+      import 'react-native-gesture-handler';
+      ```
 
 ## Notas y Consejos
 
