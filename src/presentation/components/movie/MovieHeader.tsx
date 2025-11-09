@@ -1,38 +1,45 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
-import { StyleSheet, useWindowDimensions, Image, View, Text, Pressable } from 'react-native';
-import { IFullMovie } from '../../../core/entities/movie.entity';
-import { useNavigation } from '@react-navigation/native';
+import {
+  StyleSheet,
+  useWindowDimensions,
+  Image,
+  View,
+  Text,
+  Pressable,
+} from 'react-native';
+import {IFullMovie} from '../../../core/entities/movie.entity';
+import {useNavigation} from '@react-navigation/native';
 
 interface Props {
   movie: IFullMovie;
 }
 
-export const MovieHeader = ({ movie }: Props) => {
-  const { height: screenHeight, width: screenWidth } = useWindowDimensions();
+export const MovieHeader = ({movie}: Props) => {
+  const {height: screenHeight, width: screenWidth} = useWindowDimensions();
   const navigation = useNavigation();
 
   return (
     <>
-      <View style={{ ...Styles.imageContainer, height: screenHeight * 0.7 }} >
-        <View style={Styles.imageBorder} >
-          <Image source={{ uri: movie.poster }} style={Styles.posterImage} />
+      <View style={{...Styles.imageContainer, height: screenHeight * 0.7}}>
+        <View style={Styles.imageBorder}>
+          <Image source={{uri: movie.poster}} style={Styles.posterImage} />
         </View>
       </View>
 
+      <View style={Styles.marginContainer}>
+        <Text style={Styles.subTitle}>{movie.title}</Text>
+        <Text style={Styles.title}>{movie.title}</Text>
+      </View>
 
-        <View style={Styles.marginContainer} >
-          <Text style={Styles.subTitle} >{movie.title}</Text>
-          <Text style={Styles.title} >{movie.title}</Text>
-        </View>
-
-        <View style={Styles.backButton} >
-          <Pressable onPress={() => navigation.goBack()} >
-            <Text style={Styles.backButtonText}>Regresar</Text>
-          </Pressable>
-        </View>
+      <View style={Styles.backButton}>
+        <Pressable onPress={() => navigation.goBack()}>
+          <Text style={Styles.backButtonText}>Regresar</Text>
+        </Pressable>
+      </View>
     </>
-  )
-}
+  );
+};
 
 const Styles = StyleSheet.create({
   imageContainer: {

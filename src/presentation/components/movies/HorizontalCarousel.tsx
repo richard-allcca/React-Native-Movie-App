@@ -1,9 +1,14 @@
-
-import React, { useEffect, useId, useRef } from 'react';
-import { NativeScrollEvent, NativeSyntheticEvent, Text, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
-import { IMovie } from '../../../core/entities/movie.entity';
-import { MoviePoster } from '../MoviePoster';
+/* eslint-disable react-native/no-inline-styles */
+import React, {useEffect, useId, useRef} from 'react';
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Text,
+  View,
+} from 'react-native';
+import {FlatList} from 'react-native-gesture-handler';
+import {IMovie} from '../../../core/entities/movie.entity';
+import {MoviePoster} from '../MoviePoster';
 
 interface Props {
   movies: IMovie[];
@@ -11,21 +16,16 @@ interface Props {
   loadMore?: () => void;
 }
 
-
-export const HorizontalCarousel = ( { movies, title, loadMore }: Props ) => {
-
-  const uuid = useId()
+export const HorizontalCarousel = ({movies, title, loadMore}: Props) => {
+const uuid = useId();
 
   const isLoading = useRef(false);
 
   useEffect(() => {
-
     setTimeout(() => {
       isLoading.current = false;
     }, 200);
-
-  }, [movies])
-
+  }, [movies]);
 
   // FIXME - Comentado por falla con los id de los elementos
   // const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent> ) => {
@@ -44,44 +44,41 @@ export const HorizontalCarousel = ( { movies, title, loadMore }: Props ) => {
   // }
 
   const getTitle = () => {
-    if (!title) return null;
+    if (!title) {
+      return null;
+    }
     return (
       <Text
         style={{
           fontSize: 30,
           fontWeight: 300,
           marginLeft: 10,
-          marginBottom: 10
-        }}
-      >
+          marginBottom: 10,
+        }}>
         {title}
       </Text>
-    )
-  }
+    );
+  };
 
   return (
-    <View
-      style={{ height: title ? 260 : 220 }}
-    >
-      { getTitle() }
+    <View style={{height: title ? 260 : 220}}>
+      {getTitle()}
 
       <FlatList
         data={movies}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <MoviePoster movie={item} width={140} height={200} />
         )}
         // keyExtractor={(item, index) => `${item.title}-${index}-${item.id}`}
         keyExtractor={(item, index) => {
           // const key = `${uuid}-${item.id}`
-          const key = `${item.title}-${index}-${item.id}`
-          return key
-        }
-
-        }
+          const key = `${item.title}-${index}-${item.id}`;
+          return key;
+        }}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
         // onScroll={(event) => onScroll(event) }
       />
     </View>
-  )
-}
+  );
+};

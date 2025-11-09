@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 export interface INowPlayingResponse {
   dates:         IDates;
   page:          number;
