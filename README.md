@@ -223,4 +223,38 @@ const isDarkMode = useColorScheme() === 'dark';
 
 ---
 
+## Problema de finales de línea (CRLF vs LF) en Windows
+
+### ¿Por qué ocurre?
+
+En sistemas Windows, los archivos de texto suelen guardarse con finales de línea CRLF (`\r\n`). Sin embargo, muchos proyectos multiplataforma (especialmente en React Native, Node.js, y otros frameworks modernos) prefieren el formato LF (`\n`) para evitar problemas de compatibilidad, lint y compilación entre diferentes sistemas operativos.
+
+Si tu configuración global de Git tiene `core.autocrlf=true`, Git convertirá automáticamente los finales de línea a CRLF al guardar archivos en Windows. Esto puede causar errores en proyectos que requieren LF, como este de React Native.
+
+### ¿Cómo solucionarlo solo para este proyecto?
+
+Para evitar que este problema afecte otros proyectos, puedes sobrescribir la configuración de Git solo en este repositorio:
+
+1. Crea el archivo `.gitattributes` en la raíz del proyecto con el siguiente contenido:
+
+   ```bash
+   * text=auto eol=lf
+   ```
+
+2. Ejecuta en la terminal dentro de la carpeta del proyecto:
+
+   ```bash
+   git config core.autocrlf false
+   git add --renormalize .
+   git commit -m "Renormalize line endings to LF for React Native project"
+   ```
+
+Esto fuerza el uso de LF solo en este proyecto, sin modificar la configuración global de Git ni afectar otros repositorios que usen CRLF.
+
+### Recomendación
+
+Mantén esta configuración si trabajas en proyectos multiplataforma o colaborativos. Si el resto de tus proyectos funcionan bien con CRLF, no necesitas cambiar la configuración global de Git.
+
+---
+
 ¡Listo! Ahora puedes comenzar a desarrollar y personalizar tu Movie App 🚀

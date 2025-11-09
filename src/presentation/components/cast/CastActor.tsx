@@ -1,8 +1,8 @@
-import { Image, StyleSheet, Text, View } from "react-native";
-import { ICast } from "../../../core/entities/cast.entity";
+import {Image, StyleSheet, Text, View} from 'react-native';
+import {ICast} from '../../../core/entities/cast.entity';
 
 interface Props {
-  actor: ICast
+  actor: ICast;
 }
 
 export const CastActor = ({actor}: Props) => {

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 export interface IMovieDBCastResponse {
   id:   number;
   cast: IMovieDBCast[];
