@@ -256,5 +256,3 @@ Esto fuerza el uso de LF solo en este proyecto, sin modificar la configuración 
 Mantén esta configuración si trabajas en proyectos multiplataforma o colaborativos. Si el resto de tus proyectos funcionan bien con CRLF, no necesitas cambiar la configuración global de Git.
 
 ---
-
-¡Listo! Ahora puedes comenzar a desarrollar y personalizar tu Movie App 🚀
