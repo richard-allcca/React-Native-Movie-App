@@ -1,7 +1,7 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import {IMovie} from '../../core/entities/movie.entity';
+import {StyleSheet, Text, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
+import {IMovie} from '../../core/entities/movie.entity';
 import {MoviePoster} from './MoviePoster';
 
 interface Props {
@@ -11,17 +11,25 @@ interface Props {
 
 export const PosterCarousel = ({height = 440, movies}: Props) => {
   return (
-    <View style={{height: height}}>
-      <ScrollView
-        horizontal // type scroll
-        showsHorizontalScrollIndicator={false} // show scroll
-      >
-        {movies.map(movie => (
-          <View key={movie.id}>
-            <MoviePoster movie={movie} />
-          </View>
-        ))}
-      </ScrollView>
+    <View style={{height}}>
+      {movies.length === 0 ? (
+        <Text style={styles.empty}>No hay películas</Text>
+      ) : (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {movies.map(movie => (
+            <View key={movie.id}>
+              <MoviePoster movie={movie} />
+            </View>
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  empty: {
+    marginLeft: 10,
+    opacity: 0.7,
+  },
+});

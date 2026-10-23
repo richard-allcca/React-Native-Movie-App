@@ -1,45 +1,45 @@
-import {useEffect, useState} from 'react';
-import {movieDbFetcher} from '../../config/adapters/movieDbFetcher';
+import {useCallback, useEffect, useState} from 'react';
+import {Movies} from '../../composition/movies';
 import {ICast} from '../../core/entities/cast.entity';
 import {IFullMovie} from '../../core/entities/movie.entity';
-import * as UseCases from '../../core/use-cases';
 
 export const useMovie = (movieId: number) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [movie, setMovie] = useState<IFullMovie>();
   const [cast, setCast] = useState<ICast[]>();
 
-  useEffect(() => {
-    loadMovie();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const loadMovie = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const [movieData, castData] = await Promise.all([
+        Movies.byId(movieId),
+        Movies.cast(movieId),
+      ]);
+      setMovie(movieData);
+      setCast(castData);
+    } catch (err) {
+      setMovie(undefined);
+      setCast(undefined);
+      setError(
+        err instanceof Error ? err.message : 'No se pudo cargar la película',
+      );
+    } finally {
+      setIsLoading(false);
+    }
   }, [movieId]);
 
-  const loadMovie = async () => {
-    setIsLoading(true);
-
-    const moviePromise = await UseCases.getMovieByIdUseCAse(
-      movieDbFetcher,
-      movieId,
-    );
-    const castPromise = await UseCases.getMovieCastUseCase(
-      movieDbFetcher,
-      movieId,
-    );
-
-    const [movieData, castData] = await Promise.all([
-      moviePromise,
-      castPromise,
-    ]);
-
-    setMovie(movieData);
-    setCast(castData);
-
-    setIsLoading(false);
-  };
+  useEffect(() => {
+    loadMovie();
+  }, [loadMovie]);
 
   return {
     isLoading,
+    error,
     movie,
     cast,
+    retry: loadMovie,
   };
 };

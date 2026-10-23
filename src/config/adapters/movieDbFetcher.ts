@@ -1,13 +1,25 @@
-import { THE_MOVIE_DB_KEY } from "@env";
-// import { AxiosAdapter } from "./http/axios.adapter";
-import { FetchAdapter } from './http/fetch.adapter';
+import {THE_MOVIE_DB_KEY} from '@env';
+import {AxiosAdapter} from './http/axios.adapter';
+import {FetchAdapter} from './http/fetch.adapter';
+import {HttpAdapter} from './http/http.adapter';
 
-// Puede utilizarse AxiosAdapter o FetchAdapter según preferencia
-export const movieDbFetcher = new FetchAdapter({
-  baseUrl: 'https://api.themoviedb.org/3/movie',
+const movieDbOptions = {
+  baseUrl: 'https://api.themoviedb.org/3',
   params: {
-    // api_key: 'e928d06fdb99aa428f609f48b22098d5',
-    api_key: THE_MOVIE_DB_KEY, // utilizando react-native-dotenv
+    api_key: THE_MOVIE_DB_KEY,
     language: 'es',
   },
-});
+};
+
+// Pendiente de pruebas manuales. Cambiar a 'axios' para usar AxiosAdapter.
+const activeAdapter = 'fetch' as 'fetch' | 'axios';
+
+const createMovieDbFetcher = (): HttpAdapter => {
+  if (activeAdapter === 'axios') {
+    return new AxiosAdapter(movieDbOptions);
+  }
+
+  return new FetchAdapter(movieDbOptions);
+};
+
+export const movieDbFetcher = createMovieDbFetcher();

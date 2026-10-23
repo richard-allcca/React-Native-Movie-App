@@ -107,11 +107,10 @@ yarn install
 
       Dentro de tu cuenta, ve a Perfil > API para generar tus credenciales.
 
-  2. Crea un archivo `.env` en la raíz del proyecto y agrega tu variable:
+  2. Crea un archivo `.env` en la raíz del proyecto. La app solo lee `THE_MOVIE_DB_KEY` y la envía como `api_key`. `THE_MOVIE_DB_TOKEN` no participa.
 
       ```env
-      THE_MOVIE_DB_KEY: tu_api_key_aquí
-      THE_MOVIE_DB_TOKEN: tu_token_aquí
+      THE_MOVIE_DB_KEY=tu_api_key_aquí
       ```
 
   3. Instala dotenv:
@@ -143,7 +142,7 @@ yarn install
 
       ```ts
       declare module '@env' {
-        export const API_KEY: string;
+        export const THE_MOVIE_DB_KEY: string;
       }
       ```
 
@@ -210,6 +209,14 @@ yarn install
       ```js
       import 'react-native-gesture-handler';
       ```
+
+## Cliente HTTP
+
+La app sigue en React Native CLI (`android/`, `ios/`, `npm run android` / `npm run ios`). No usa Expo.
+
+Hay dos clientes con el mismo contrato (`HttpAdapter`): `FetchAdapter` (`fetch`) y `AxiosAdapter` (Axios). Los dos se mantienen. El activo se elige en `src/config/adapters/movieDbFetcher.ts` cambiando `activeAdapter` a `'fetch'` o `'axios'`. La base de la API es `https://api.themoviedb.org/3`.
+
+El plan de mejora vigente está en [PLAN-ACTUALIZACION.md](./PLAN-ACTUALIZACION.md).
 
 ## Notas y Consejos
 

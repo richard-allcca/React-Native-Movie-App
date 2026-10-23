@@ -1,68 +1,29 @@
-/* eslint-disable prettier/prettier */
-export interface INowPlayingResponse {
-  dates:         IDates;
-  page:          number;
-  results:       IResult[];
-  total_pages:   number;
+export interface IMovieDbListResponse {
+  page: number;
+  results: IResult[];
+  total_pages: number;
   total_results: number;
-}
-
-export interface IPopularResponse {
-  page:          number;
-  results:       IResult[];
-  total_pages:   number;
-  total_results: number;
-}
-
-export interface ITopRatedResponse {
-  page:          number;
-  results:       IResult[];
-  total_pages:   number;
-  total_results: number;
-}
-
-export interface ITopRatedResponse {
-  page:          number;
-  results:       IResult[];
-  total_pages:   number;
-  total_results: number;
-}
-
-export interface IUpComingResponse {
-  dates:         IDates;
-  page:          number;
-  results:       IResult[];
-  total_pages:   number;
-  total_results: number;
+  dates?: IDates;
 }
 
 export interface IResult {
-  adult:             boolean;
-  backdrop_path:     string;
-  genre_ids?:         number[];
-  id:                number;
-  original_language: OriginalLanguage;
-  original_title:    string;
-  overview:          string;
-  popularity:        number;
-  poster_path:       string;
-  release_date:      Date;
-  title:             string;
-  video:             boolean;
-  vote_average:      number;
-  vote_count:        number;
+  adult: boolean;
+  backdrop_path: string | null;
+  genre_ids?: number[];
+  id: number;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string | null;
+  release_date: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
 }
 
 export interface IDates {
-  maximum: Date;
-  minimum: Date;
-}
-
-export enum OriginalLanguage {
-  En = "en",
-  Es = "es",
-  Ja = "ja",
-  Zh = "zh",
-  Fr = "fr",
-  Ko = "ko",
+  maximum: string;
+  minimum: string;
 }

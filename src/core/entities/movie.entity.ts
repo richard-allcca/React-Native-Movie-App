@@ -4,14 +4,14 @@ export interface IMovie {
   description: string;
   releaseDate: Date;
   rating: number;
-  poster: string;
-  backdrop: string;
+  posterPath: string | null;
+  backdropPath: string | null;
 }
 
 export interface IFullMovie extends IMovie {
   genres: string[];
   duration: number;
-  budget: number; // presupuesto
+  budget: number;
   originalTitle: string;
-  productionsCompany: string[];
+  productionCompanies: string[];
 }

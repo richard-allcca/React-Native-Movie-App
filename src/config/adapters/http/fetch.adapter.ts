@@ -1,45 +1,134 @@
-import { HttpAdapter } from "./http.adapter";
+import {
+  HTTP_TIMEOUT_MS,
+  HttpAdapter,
+  HttpError,
+  HttpRequestOptions,
+  QueryParams,
+} from './http.adapter';
 
 interface Options {
   baseUrl: string;
-  params?: Record<string, string>;
+  params?: QueryParams;
 }
 
 export class FetchAdapter implements HttpAdapter {
   private baseUrl: string;
-  private params?: Record<string, string>;
+  private params: QueryParams;
 
   constructor(options: Options) {
     this.baseUrl = options.baseUrl;
-    this.params = options.params;
+    this.params = options.params ?? {};
   }
 
-  private buildUrl(url: string): string {
-    // Unir baseUrl y url correctamente
-    let fullUrl = url.startsWith('http')
+  private buildUrl(url: string, params?: QueryParams): string {
+    const fullUrl = url.startsWith('http')
       ? url
-      // Elimina la barra final de baseUrl y la barra inicial de url
       : [this.baseUrl.replace(/\/$/, ''), url.replace(/^\//, '')].join('/');
 
-    if (this.params) {
-      const searchParams = new URLSearchParams(this.params).toString();
-      if (searchParams) {
-        fullUrl += (fullUrl.includes('?') ? '&' : '?') + searchParams;
-      }
+    const search = new URLSearchParams();
+    Object.entries({...this.params, ...params}).forEach(([key, value]) => {
+      search.append(key, String(value));
+    });
+
+    const query = search.toString();
+    if (!query) {
+      return fullUrl;
     }
-    return fullUrl;
+
+    return fullUrl + (fullUrl.includes('?') ? '&' : '?') + query;
   }
 
-  async get<T>(url: string, options?: Record<string, unknown>): Promise<T> {
-    try {
-      const fullUrl = this.buildUrl(url);
-      const response = await fetch(fullUrl, { ...options, method: 'GET' });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    } catch (error) {
-      throw new Error(`Error fetching data from ${url}: ${error}`);
+  private bindCallerSignal(controller: AbortController, signal?: AbortSignal) {
+    if (!signal) {
+      return;
     }
+    if (signal.aborted) {
+      controller.abort();
+      return;
+    }
+    signal.addEventListener('abort', () => controller.abort(), {once: true});
+  }
+
+  async get<T>(url: string, options?: HttpRequestOptions): Promise<T> {
+    const fullUrl = this.buildUrl(url, options?.params);
+    const controller = new AbortController();
+    let timedOut = false;
+    const timeoutId = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, HTTP_TIMEOUT_MS);
+    this.bindCallerSignal(controller, options?.signal);
+
+    try {
+      const response = await fetch(fullUrl, {
+        method: 'GET',
+        headers: options?.headers,
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw await this.errorFromResponse(response, fullUrl);
+      }
+
+      try {
+        return (await response.json()) as T;
+      } catch (error) {
+        if (error instanceof HttpError) {
+          throw error;
+        }
+        throw new HttpError(
+          'La respuesta no es JSON válido',
+          response.status,
+          fullUrl,
+        );
+      }
+    } catch (error) {
+      if (error instanceof HttpError) {
+        throw error;
+      }
+      throw new HttpError(
+        this.networkMessage(timedOut, options?.signal, error),
+        undefined,
+        fullUrl,
+      );
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  private async errorFromResponse(
+    response: Response,
+    fullUrl: string,
+  ): Promise<HttpError> {
+    let statusMessage: string | undefined;
+    try {
+      const body = await response.json();
+      if (body && typeof body.status_message === 'string') {
+        statusMessage = body.status_message;
+      }
+    } catch {
+      statusMessage = undefined;
+    }
+
+    return new HttpError(
+      statusMessage ?? `Error HTTP ${response.status}`,
+      response.status,
+      fullUrl,
+      statusMessage,
+    );
+  }
+
+  private networkMessage(
+    timedOut: boolean,
+    signal: AbortSignal | undefined,
+    error: unknown,
+  ): string {
+    if (timedOut) {
+      return 'La petición superó el tiempo de espera';
+    }
+    if (signal?.aborted) {
+      return 'La petición fue cancelada';
+    }
+    return error instanceof Error ? error.message : 'Error fetching data';
   }
 }

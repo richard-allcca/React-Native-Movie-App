@@ -1,28 +1,38 @@
 import type {IFullMovie, IMovie} from '../../core/entities/movie.entity';
 import {IMovieDbByIdResponse} from '../interfaces/movie-db-by-id-response';
-import type {IResult} from '../interfaces/movie-db-responses';
+
+interface MovieDbSummary {
+  id: number;
+  title: string;
+  overview: string | null;
+  release_date: string;
+  vote_average: number;
+  poster_path: string | null;
+  backdrop_path: string | null;
+}
 
 export class MovieMapper {
-  static fromMovieDbResultToEntity(result: IResult): IMovie {
+  static fromMovieDbResultToEntity(result: MovieDbSummary): IMovie {
     return {
       id: result.id,
       title: result.title,
-      description: result.overview,
+      description: result.overview ?? '',
       releaseDate: new Date(result.release_date),
       rating: result.vote_average,
-      poster: `https://image.tmdb.org/t/p/w500${result.poster_path}`,
-      backdrop: `https://image.tmdb.org/t/p/w500${result.backdrop_path}`,
+      posterPath: result.poster_path,
+      backdropPath: result.backdrop_path,
     };
   }
 
   static fromMovieDBToEntity(movie: IMovieDbByIdResponse): IFullMovie {
     return {
       ...this.fromMovieDbResultToEntity(movie),
-      genres: movie.genres.map(g => g.name),
-      duration: movie.runtime,
-      budget: movie.budget, // presupuesto
+      genres: movie.genres?.map(genre => genre.name) ?? [],
+      duration: movie.runtime ?? 0,
+      budget: movie.budget ?? 0,
       originalTitle: movie.original_title,
-      productionsCompany: movie.production_companies.map(pc => pc.name),
+      productionCompanies:
+        movie.production_companies?.map(company => company.name) ?? [],
     };
   }
 }

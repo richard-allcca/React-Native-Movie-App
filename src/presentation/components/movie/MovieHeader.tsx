@@ -1,47 +1,41 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
-import {
-  StyleSheet,
-  useWindowDimensions,
-  Image,
-  View,
-  Text,
-  Pressable,
-} from 'react-native';
+import {Image, StyleSheet, Text, useWindowDimensions, View} from 'react-native';
+import {movieImageUri} from '../../../config/helpers/movie-image';
 import {IFullMovie} from '../../../core/entities/movie.entity';
-import {useNavigation} from '@react-navigation/native';
 
 interface Props {
   movie: IFullMovie;
 }
 
 export const MovieHeader = ({movie}: Props) => {
-  const {height: screenHeight, width: screenWidth} = useWindowDimensions();
-  const navigation = useNavigation();
+  const {height: screenHeight} = useWindowDimensions();
+  const uri = movieImageUri(movie.posterPath, 'w780');
+  const showOriginalTitle =
+    movie.originalTitle.length > 0 && movie.originalTitle !== movie.title;
 
   return (
     <>
-      <View style={{...Styles.imageContainer, height: screenHeight * 0.7}}>
-        <View style={Styles.imageBorder}>
-          <Image source={{uri: movie.poster}} style={Styles.posterImage} />
+      <View style={{...styles.imageContainer, height: screenHeight * 0.7}}>
+        <View style={styles.imageBorder}>
+          {uri ? (
+            <Image source={{uri}} style={styles.posterImage} />
+          ) : (
+            <View style={[styles.posterImage, styles.placeholder]} />
+          )}
         </View>
       </View>
 
-      <View style={Styles.marginContainer}>
-        <Text style={Styles.subTitle}>{movie.title}</Text>
-        <Text style={Styles.title}>{movie.title}</Text>
-      </View>
-
-      <View style={Styles.backButton}>
-        <Pressable onPress={() => navigation.goBack()}>
-          <Text style={Styles.backButtonText}>Regresar</Text>
-        </Pressable>
+      <View style={styles.marginContainer}>
+        {showOriginalTitle ? (
+          <Text style={styles.subTitle}>{movie.originalTitle}</Text>
+        ) : null}
+        <Text style={styles.title}>{movie.title}</Text>
       </View>
     </>
   );
 };
 
-const Styles = StyleSheet.create({
+const styles = StyleSheet.create({
   imageContainer: {
     width: '100%',
     shadowColor: '#000',
@@ -51,12 +45,10 @@ const Styles = StyleSheet.create({
     },
     shadowOpacity: 0.24,
     shadowRadius: 7,
-
     elevation: 10,
     borderBottomEndRadius: 25,
     borderBottomStartRadius: 25,
   },
-
   imageBorder: {
     flex: 1,
     overflow: 'hidden',
@@ -66,7 +58,9 @@ const Styles = StyleSheet.create({
   posterImage: {
     flex: 1,
   },
-
+  placeholder: {
+    backgroundColor: '#d9d9d9',
+  },
   marginContainer: {
     marginHorizontal: 20,
     marginTop: 20,
@@ -78,25 +72,5 @@ const Styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-  },
-  backButton: {
-    backgroundColor: 'rgba(17, 25, 40, 0.52)',
-    borderRadius: 10,
-    elevation: 9,
-    left: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    position: 'absolute',
-    top: 35,
-    zIndex: 999,
-    cursor: 'pointer',
-  },
-  backButtonText: {
-    color: 'white',
-    fontSize: 25,
-    fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.55)',
-    textShadowOffset: {width: -1, height: 1},
-    textShadowRadius: 10,
   },
 });
