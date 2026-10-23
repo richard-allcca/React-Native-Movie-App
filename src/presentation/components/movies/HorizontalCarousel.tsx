@@ -1,6 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {IMovie} from '../../../core/entities/movie.entity';
 import {MoviePoster} from '../MoviePoster';
 

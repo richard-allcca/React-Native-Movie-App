@@ -1,6 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {IMovie} from '../../core/entities/movie.entity';
 import {MoviePoster} from './MoviePoster';
 

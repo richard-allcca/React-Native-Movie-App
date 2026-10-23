@@ -1,17 +1,21 @@
 package com.moviesapp
 
+import android.os.Bundle
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
-
-// For navitgation
-import android.os.Bundle;
+import com.swmansion.rnscreens.fragment.restoration.RNScreensFragmentFactory
 
 class MainActivity : ReactActivity() {
-  // For navigation
+
+  /**
+   * react-native-screens restores fragments through its own factory.
+   * https://reactnavigation.org/docs/getting-started
+   */
   override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(null)
+    supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
+    super.onCreate(savedInstanceState)
   }
 
   /**
