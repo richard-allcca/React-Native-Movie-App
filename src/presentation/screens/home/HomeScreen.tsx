@@ -1,14 +1,7 @@
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {Pressable, RefreshControl, ScrollView, StyleSheet, Text} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {ErrorState} from '../../components/feedback/ErrorState';
 import {FullScreenLoader} from '../../components/loaders/FullScreenLoader';
 import {PosterCarousel} from '../../components/PosterCarousel';
@@ -17,7 +10,6 @@ import {useMovies} from '../../hooks/useMovies';
 import {RootStackParams} from '../../navigation/Navigation';
 
 export const HomeScreen = () => {
-  const {top} = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParams>>();
   const {
     nowPlaying,
@@ -42,11 +34,11 @@ export const HomeScreen = () => {
   }
 
   return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl refreshing={isRefreshing} onRefresh={refresh} />
-      }>
-      <View style={{marginTop: top + 20}}>
+    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={refresh} />
+        }>
         <Pressable
           onPress={() => navigation.navigate('Search')}
           style={styles.search}>
@@ -67,12 +59,15 @@ export const HomeScreen = () => {
         />
         <HorizontalCarousel movies={upcoming} title="Próximos estrenos" />
         <HorizontalCarousel movies={topRated} title="Mejor valoradas" />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   search: {
     marginHorizontal: 16,
     marginBottom: 16,
@@ -80,6 +75,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: '#000',
   },
   searchText: {
     color: '#666',
