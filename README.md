@@ -1,265 +1,212 @@
 # React Native Movie App
 
-Aplicación móvil para explorar películas usando la API de The Movie DB, desarrollada con React Native y arquitectura Domain Driven Design (DDD).
+Aplicación móvil para explorar y buscar películas con la API de The Movie DB. Está hecha con React Native CLI y organizada por capas.
 
-## Arquitectura utilizada
+## Arquitectura
 
-Generated on: 8/14/2025, 11:03:34 PM
-Root path: `c:\Repos\React-native\03-moviesApp\src`
-node: 20.10.0
+`presentation` pinta pantallas y no conoce The Movie DB. `core` define entidades, el puerto `MovieRepository` y los casos de uso. `infrastructure` implementa ese puerto contra la API. `config` tiene los clientes HTTP. `composition/movies.ts` une los casos de uso con el repositorio.
 
-```md
-├── 📁 config/
-│   ├── 📁 adapters/
-│   │   ├── 📁 http/
-│   │   │   ├── 📄 axios.adapter.ts
-│   │   │   └── 📄 http.adapter.ts
-│   │   └── 📄 movieDbFetcher.ts
-│   └── 📁 helpers/
-│       └── 📄 formatter.ts
-├── 📁 core/
-│   ├── 📁 entities/
-│   │   ├── 📄 cast.entity.ts
-│   │   └── 📄 movie.entity.ts
-│   └── 📁 use-cases/
-│       ├── 📁 movie/
-│       │   ├── 📄 get-by-id.use-case.ts
-│       │   └── 📄 get-cast.use-case.ts
-│       ├── 📁 movies/
-│       │   ├── 📄 now_playing.use-case.ts
-│       │   ├── 📄 popular.use-case.ts
-│       │   ├── 📄 top_rated.use-case.ts
-│       │   └── 📄 up_coming.use-case.ts
-│       └── 📄 index.ts
-├── 📁 infrastructure/
-│   ├── 📁 interfaces/
-│   │   ├── 📄 movie-db-by-id-response.ts
-│   │   ├── 📄 movie-db-cast-response.ts
-│   │   └── 📄 movie-db-responses.ts
-│   └── 📁 mappers/
-│       ├── 📄 cast.mapper.ts
-│       └── 📄 movie.mapper.ts
-└── 📁 presentation/
-    ├── 📁 components/
-    │   ├── 📁 cast/
-    │   │   └── 📄 CastActor.tsx
-    │   ├── 📁 loaders/
-    │   │   └── 📄 FullScreenLoader.tsx
-    │   ├── 📁 movie/
-    │   │   ├── 📄 MovieDetails.tsx
-    │   │   └── 📄 MovieHeader.tsx
-    │   ├── 📁 movies/
-    │   │   └── 📄 HorizontalCarousel.tsx
-    │   ├── 📄 MoviePoster.tsx
-    │   └── 📄 PosterCarousel.tsx
-    ├── 📁 hooks/
-    │   ├── 📄 useMovie.tsx
-    │   └── 📄 useMovies.tsx
-    ├── 📁 navigation/
-    │   └── 📄 Navigation.tsx
-    └── 📁 screens/
-        ├── 📁 details/
-        │   └── 📄 DetailsScreens.tsx
-        └── 📁 home/
-            └── 📄 HomeScreen.tsx
+```text
+src/
+├── composition/
+│   └── movies.ts
+├── config/
+│   ├── adapters/
+│   │   ├── http/
+│   │   │   ├── axios.adapter.ts
+│   │   │   ├── fetch.adapter.ts
+│   │   │   └── http.adapter.ts
+│   │   └── movieDbFetcher.ts
+│   └── helpers/
+│       ├── formatter.ts
+│       └── movie-image.ts
+├── core/
+│   ├── entities/
+│   │   ├── cast.entity.ts
+│   │   └── movie.entity.ts
+│   ├── repositories/
+│   │   └── movie.repository.ts
+│   └── use-cases/
+│       ├── movie/
+│       │   ├── get-by-id.use-case.ts
+│       │   └── get-cast.use-case.ts
+│       ├── movies/
+│       │   ├── now_playing.use-case.ts
+│       │   ├── popular.use-case.ts
+│       │   ├── search.use-case.ts
+│       │   ├── top_rated.use-case.ts
+│       │   └── upcoming.use-case.ts
+│       └── index.ts
+├── infrastructure/
+│   ├── interfaces/
+│   │   ├── movie-db-by-id-response.ts
+│   │   ├── movie-db-cast-response.ts
+│   │   └── movie-db-responses.ts
+│   ├── mappers/
+│   │   ├── cast.mapper.ts
+│   │   └── movie.mapper.ts
+│   └── repositories/
+│       └── movie-db.repository.ts
+└── presentation/
+    ├── components/
+    │   ├── cast/CastActor.tsx
+    │   ├── feedback/ErrorState.tsx
+    │   ├── loaders/FullScreenLoader.tsx
+    │   ├── movie/MovieDetails.tsx
+    │   ├── movie/MovieHeader.tsx
+    │   ├── movies/HorizontalCarousel.tsx
+    │   ├── MoviePoster.tsx
+    │   └── PosterCarousel.tsx
+    ├── hooks/
+    │   ├── useMovie.tsx
+    │   ├── useMovies.tsx
+    │   └── useSearch.tsx
+    ├── navigation/Navigation.tsx
+    └── screens/
+        ├── details/DetailsScreen.tsx
+        ├── home/HomeScreen.tsx
+        └── search/SearchScreen.tsx
 ```
 
-## Tabla de Contenido
+## Tabla de contenido
 
 1. [Introducción](#introducción)
-2. [Requisitos Previos](#requisitos-previos)
+2. [Requisitos previos](#requisitos-previos)
 3. [Instalación](#instalación)
-4. [Configuración de Entorno](#configuración-de-entorno)
-5. [Navegación y Dependencias](#navegación-y-dependencias)
-6. [Notas y Consejos](#notas-y-consejos)
-
----
+4. [Configuración de entorno](#configuración-de-entorno)
+5. [Ejecución](#ejecución)
+6. [Navegación](#navegación)
+7. [Cliente HTTP](#cliente-http)
+8. [Notas](#notas)
 
 ## Introducción
 
-Esta app permite consultar información de películas, ver detalles, elencos y navegar entre diferentes categorías usando la API de [The Movie DB](https://www.themoviedb.org/).
+La app consulta [The Movie DB](https://www.themoviedb.org/): cartelera, populares, próximos estrenos, mejor valoradas, detalle con reparto y búsqueda.
 
-## Enlaces Útiles
-
-- [Documentación de la API de The Movie DB](https://developer.themoviedb.org/reference/getting-started)
+- [Documentación de la API](https://developer.themoviedb.org/reference/getting-started)
 - [Documentación de React Native](https://reactnative.dev/docs/getting-started)
+- [Plan de los cambios](./PLAN-ACTUALIZACION.md)
 
-## Requisitos Previos
+## Requisitos previos
 
 - Node.js 22.11 o superior
-- SDK Android 37 y `targetSdk` 36 (los que pide React Native 0.88)
-- Tener un emulador o dispositivo físico corriendo
-- Yarn o npm instalado
+- npm
+- SDK Android 37 y `targetSdk` 36, los que pide React Native 0.88
+- Un emulador o un dispositivo
+- Para iOS, un Mac con Xcode. El deployment target del proyecto es 15.1
 
 ## Instalación
 
-Clona el repositorio y ejecuta:
-
 ```bash
 npm install
-# o
-yarn install
 ```
 
-## Configuración de Entorno
+En Windows, `postinstall` ejecuta `scripts/shorten-gesture-handler-objects.js`. Copia los shadow nodes de `react-native-gesture-handler` a una ruta corta dentro de `android/`. Sin eso, Ninja (el de CMake 3.22) rechaza archivos objeto de más de 260 caracteres y `assembleDebug` falla. El script vuelve a aplicarse en cada `npm install` porque el cambio vive en `node_modules`.
 
-  1. Regístrate y obtén tu API KEY y TOKEN en [The Movie DB](https://www.themoviedb.org/).
+## Configuración de entorno
 
-      Dentro de tu cuenta, ve a Perfil > API para generar tus credenciales.
+1. Crea una API key en [The Movie DB](https://www.themoviedb.org/settings/api). La app la envía como `api_key`. El token de lectura no se usa.
 
-  2. Crea un archivo `.env` en la raíz del proyecto. La app solo lee `THE_MOVIE_DB_KEY` y la envía como `api_key`. `THE_MOVIE_DB_TOKEN` no participa.
+2. Crea `.env` en la raíz. El formato es `CLAVE=valor`. Hay un modelo en `.env.example`.
 
-      ```env
-      THE_MOVIE_DB_KEY=tu_api_key_aquí
-      ```
+   ```env
+   THE_MOVIE_DB_KEY=tu_api_key_aquí
+   ```
 
-  3. Instala dotenv:
+3. `react-native-dotenv` ya está en las dependencias de desarrollo. `babel.config.js` lo carga así:
 
-      ```bash
-      npm i -D react-native-dotenv
-      ```
+   ```js
+   module.exports = {
+     presets: ['module:@react-native/babel-preset'],
+     plugins: [
+       [
+         'module:react-native-dotenv',
+         {
+           envName: 'APP_ENV',
+           moduleName: '@env',
+           path: '.env',
+         },
+       ],
+     ],
+   };
+   ```
 
-  4. Configura el plugin en `babel.config.js`:
+4. Los tipos están en `types/env.d.ts`:
 
-      ```js
-      module.exports = {
-        presets: ['module:@react-native/babel-preset'],
-        plugins: [
-          [
-            'module:react-native-dotenv',
-            {
-              envName: 'APP_ENV',
-              moduleName: '@env',
-              path: '.env',
-            },
-          ],
-          // NOTA: Si usas otros plugins de react-native, este debe ir al final
-        ],
-      };
-      ```
+   ```ts
+   declare module '@env' {
+     export const THE_MOVIE_DB_KEY: string;
+   }
+   ```
 
-  5. (Opcional) Si usas TypeScript, crea `types/env.d.ts`:
+## Ejecución
 
-      ```ts
-      declare module '@env' {
-        export const THE_MOVIE_DB_KEY: string;
-      }
-      ```
+```bash
+npm start
+npm run android
+npm run ios
+```
 
-  6. Ejecución de la App
+`npm run ios` necesita macOS. En Windows el proyecto iOS ya está en la plantilla 0.88 (`AppDelegate.swift` y `SceneDelegate.swift`), pero no se ha compilado aquí.
 
-      Para iniciar el proyecto en modo desarrollo:
+## Navegación
 
-      ```bash
-      npm run start
-      # o
-      yarn start
-      ```
+El stack ya está instalado: `@react-navigation/native` 7.5.1 y `@react-navigation/stack` 7.12.1, con `react-native-screens` 4.30.0, `react-native-safe-area-context` 5.5.2 y `react-native-gesture-handler` 3.4.0. Stack 7 no usa `@react-native-masked-view/masked-view`.
 
-## Navegación y Dependencias
+`index.js` y `App.tsx` importan `react-native-gesture-handler` antes que el resto. La raíz envuelve el navegador así:
 
-  1. Instalación de React Navigation.
+```tsx
+<GestureHandlerRootView style={styles.root}>
+  <SafeAreaProvider>
+    <NavigationContainer>
+      <Navigation />
+    </NavigationContainer>
+  </SafeAreaProvider>
+</GestureHandlerRootView>
+```
 
-     Sigue la [documentación oficial](https://reactnavigation.org/)
+Las pantallas son `Home`, `Details` (`movieId`) y `Search`. El header nativo está oculto.
 
-      ```bash
-        npm install @react-navigation/native
-        npm install react-native-screens react-native-safe-area-context
-      ```
+En Android, `MainActivity` registra la fábrica de fragmentos de `react-native-screens` antes de `super.onCreate`:
 
-  2. Configuración Adicional para Android
-
-      Edita `MainActivity.kt` o `MainActivity.java` en `android/app/src/main/java/<tu paquete>/`:
-
-      ```kotlin
-      import android.os.Bundle
-
-      class MainActivity: ReactActivity() {
-      override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(null)
-      }
-      }
-      ```
-
-  3. Envolviendo la App con NavigationContainer
-
-      ```tsx
-        import * as React from 'react';
-        import { NavigationContainer } from '@react-navigation/native';
-
-        export default function App() {
-          return (
-            <NavigationContainer>
-              {/* Resto de tu app */}
-            </NavigationContainer>
-          );
-        }
-      ```
-
-  4. Stack Navigation y Gestos
-
-      ```bash
-      npm install @react-navigation/stack
-      npm install react-native-gesture-handler
-      npm install @react-native-masked-view/masked-view
-      ```
-
-      Agrega al inicio de tu archivo de entrada (`index.js` o `App.js`):
-
-      ```js
-      import 'react-native-gesture-handler';
-      ```
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+  supportFragmentManager.fragmentFactory = RNScreensFragmentFactory()
+  super.onCreate(savedInstanceState)
+}
+```
 
 ## Cliente HTTP
 
-La app sigue en React Native CLI (`android/`, `ios/`, `npm run android` / `npm run ios`). No usa Expo.
+El proyecto sigue en React Native CLI, con las carpetas `android/` e `ios/`. No usa Expo.
 
-Hay dos clientes con el mismo contrato (`HttpAdapter`): `FetchAdapter` (`fetch`) y `AxiosAdapter` (Axios). Los dos se mantienen. El activo se elige en `src/config/adapters/movieDbFetcher.ts` cambiando `activeAdapter` a `'fetch'` o `'axios'`. La base de la API es `https://api.themoviedb.org/3`.
+`FetchAdapter` y `AxiosAdapter` cumplen el mismo contrato (`HttpAdapter`): misma URL, mismos query params, timeout de 10 s y error con status. Los dos se quedan. El activo se elige en `src/config/adapters/movieDbFetcher.ts`:
 
-El plan de mejora vigente está en [PLAN-ACTUALIZACION.md](./PLAN-ACTUALIZACION.md).
-
-## Notas y Consejos
-
-- Para detectar el modo oscuro:
-
-```jsx
-const isDarkMode = useColorScheme() === 'dark';
+```ts
+const activeAdapter = 'fetch' as 'fetch' | 'axios';
 ```
 
-- Consulta la documentación oficial de cada dependencia para detalles avanzados.
+La base de la API es `https://api.themoviedb.org/3`.
 
----
+En el emulador Android los dos clientes cargan las mismas listas y las mismas páginas de Popular. Sin red, `fetch` muestra "Network request failed" y Axios muestra "Network Error". En los dos casos la pantalla ofrece Reintentar.
 
-## Problema de finales de línea (CRLF vs LF) en Windows
+## Notas
 
-### ¿Por qué ocurre?
+Las listas usan `ScrollView` y `FlatList` de React Native. Gesture Handler 3 renombró los suyos a `LegacyScrollView` y `LegacyFlatList`.
 
-En sistemas Windows, los archivos de texto suelen guardarse con finales de línea CRLF (`\r\n`). Sin embargo, muchos proyectos multiplataforma (especialmente en React Native, Node.js, y otros frameworks modernos) prefieren el formato LF (`\n`) para evitar problemas de compatibilidad, lint y compilación entre diferentes sistemas operativos.
+### Finales de línea en Windows
 
-Si tu configuración global de Git tiene `core.autocrlf=true`, Git convertirá automáticamente los finales de línea a CRLF al guardar archivos en Windows. Esto puede causar errores en proyectos que requieren LF, como este de React Native.
+Windows guarda CRLF (`\r\n`). Este proyecto usa LF (`\n`). `.gitattributes` ya contiene:
 
-### ¿Cómo solucionarlo solo para este proyecto?
+```text
+* text=auto eol=lf
+```
 
-Para evitar que este problema afecte otros proyectos, puedes sobrescribir la configuración de Git solo en este repositorio:
+Si Git en este clon convierte a CRLF, limítalo al repositorio:
 
-1. Crea el archivo `.gitattributes` en la raíz del proyecto con el siguiente contenido:
+```bash
+git config core.autocrlf false
+git add --renormalize .
+```
 
-   ```bash
-   * text=auto eol=lf
-   ```
-
-2. Ejecuta en la terminal dentro de la carpeta del proyecto:
-
-   ```bash
-   git config core.autocrlf false
-   git add --renormalize .
-   git commit -m "Renormalize line endings to LF for React Native project"
-   ```
-
-Esto fuerza el uso de LF solo en este proyecto, sin modificar la configuración global de Git ni afectar otros repositorios que usen CRLF.
-
-### Recomendación
-
-Mantén esta configuración si trabajas en proyectos multiplataforma o colaborativos. Si el resto de tus proyectos funcionan bien con CRLF, no necesitas cambiar la configuración global de Git.
-
----
+Eso no cambia la configuración global de Git.
