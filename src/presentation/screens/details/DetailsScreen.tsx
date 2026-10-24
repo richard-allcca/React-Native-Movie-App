@@ -1,7 +1,6 @@
 import {StackScreenProps} from '@react-navigation/stack';
 import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ErrorState} from '../../components/feedback/ErrorState';
 import {FullScreenLoader} from '../../components/loaders/FullScreenLoader';

@@ -64,7 +64,7 @@ export class FetchAdapter implements HttpAdapter {
         method: 'GET',
         headers: options?.headers,
         signal: controller.signal,
-      });
+      } as RequestInit);
 
       if (!response.ok) {
         throw await this.errorFromResponse(response, fullUrl);
@@ -102,7 +102,7 @@ export class FetchAdapter implements HttpAdapter {
   ): Promise<HttpError> {
     let statusMessage: string | undefined;
     try {
-      const body = await response.json();
+      const body = (await response.json()) as {status_message?: unknown};
       if (body && typeof body.status_message === 'string') {
         statusMessage = body.status_message;
       }

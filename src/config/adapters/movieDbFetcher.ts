@@ -11,7 +11,8 @@ const movieDbOptions = {
   },
 };
 
-// Pendiente de pruebas manuales. Cambiar a 'axios' para usar AxiosAdapter.
+// Probado en emulador: fetch y axios cargan las mismas listas y páginas.
+// Sin red, fetch muestra "Network request failed" y axios "Network Error".
 const activeAdapter = 'fetch' as 'fetch' | 'axios';
 
 const createMovieDbFetcher = (): HttpAdapter => {

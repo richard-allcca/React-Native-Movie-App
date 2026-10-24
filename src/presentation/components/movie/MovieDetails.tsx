@@ -1,9 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {Text, View} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import {IFullMovie} from '../../../core/entities/movie.entity';
 import {ICast} from '../../../core/entities/cast.entity';
-import {FlatList} from 'react-native-gesture-handler';
 import {CastActor} from '../cast/CastActor';
 import {Formatter} from '../../../config/helpers/formatter';
 

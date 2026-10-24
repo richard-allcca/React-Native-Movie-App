@@ -86,8 +86,8 @@ Esta app permite consultar información de películas, ver detalles, elencos y n
 
 ## Requisitos Previos
 
-- Node.js 18
-- SDK Android 34 (para desarrollo en Android)
+- Node.js 22.11 o superior
+- SDK Android 37 y `targetSdk` 36 (los que pide React Native 0.88)
 - Tener un emulador o dispositivo físico corriendo
 - Yarn o npm instalado
 
