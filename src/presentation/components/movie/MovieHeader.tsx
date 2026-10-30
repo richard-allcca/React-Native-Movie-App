@@ -13,23 +13,35 @@ export const MovieHeader = ({movie}: Props) => {
   const showOriginalTitle =
     movie.originalTitle.length > 0 && movie.originalTitle !== movie.title;
 
+  const renderImage = () => {
+    if (!uri) {
+      return <View style={[styles.posterImage, styles.placeholder]} />;
+    }
+    return <Image source={{uri}} style={styles.posterImage} />;
+  };
+
+  const renderTitle = () => {
+    if (!showOriginalTitle) {
+      return <Text style={styles.title}>{movie.title}</Text>;
+    }
+    return (
+      <>
+        <Text style={styles.subTitle}>{movie.originalTitle}</Text>
+        <Text style={styles.title}>{movie.title}</Text>
+      </>
+    );
+  };
+
   return (
     <>
       <View style={{...styles.imageContainer, height: screenHeight * 0.7}}>
         <View style={styles.imageBorder}>
-          {uri ? (
-            <Image source={{uri}} style={styles.posterImage} />
-          ) : (
-            <View style={[styles.posterImage, styles.placeholder]} />
-          )}
+          {renderImage()}
         </View>
       </View>
 
       <View style={styles.marginContainer}>
-        {showOriginalTitle ? (
-          <Text style={styles.subTitle}>{movie.originalTitle}</Text>
-        ) : null}
-        <Text style={styles.title}>{movie.title}</Text>
+        {renderTitle()}
       </View>
     </>
   );

@@ -49,6 +49,7 @@ export const useMovies = () => {
       result.status === 'rejected' ? [sectionNames[index]] : [],
     );
 
+    // If all sections failed and we have no content yet, set the error state to indicate a full failure
     if (failed.length === results.length && hasContent.current) {
       setError(null);
       setPartialError('No se pudo actualizar. Toca para reintentar.');
@@ -60,15 +61,18 @@ export const useMovies = () => {
     setTopRated(results[2].status === 'fulfilled' ? results[2].value : []);
     setPopular(results[3].status === 'fulfilled' ? results[3].value : []);
 
+    // Reset popular movies pagination if the popular section was successfully fetched
     if (results[3].status === 'fulfilled') {
       popularPage.current = 1;
       reachedEnd.current = false;
     }
 
+    // Mark that we have content if any section was successfully fetched
     if (results.some(result => result.status === 'fulfilled')) {
       hasContent.current = true;
     }
 
+    // If some sections failed but not all, set the partial error message
     if (failed.length === results.length) {
       const reason = results.find(result => result.status === 'rejected');
       setError(
@@ -117,9 +121,7 @@ export const useMovies = () => {
   }, [load]);
 
   const loadMorePopularMovies = useCallback(async () => {
-    if (loadingMore.current || reachedEnd.current) {
-      return;
-    }
+    if (loadingMore.current || reachedEnd.current) return;
 
     loadingMore.current = true;
     const currentRequest = requestId.current;
@@ -127,9 +129,7 @@ export const useMovies = () => {
 
     try {
       const movies = await Movies.popular(nextPage);
-      if (currentRequest !== requestId.current) {
-        return;
-      }
+      if (currentRequest !== requestId.current) return;
       if (movies.length === 0) {
         reachedEnd.current = true;
         return;

@@ -8,7 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {MoviePoster} from '../../components/MoviePoster';
 import {ErrorState} from '../../components/feedback/ErrorState';
 import {useSearch} from '../../hooks/useSearch';
@@ -17,12 +17,48 @@ import {RootStackParams} from '../../navigation/Navigation';
 interface Props extends StackScreenProps<RootStackParams, 'Search'> {}
 
 export const SearchScreen = ({navigation}: Props) => {
-  const {top} = useSafeAreaInsets();
   const [term, setTerm] = useState('');
   const {movies, isLoading, error, tooShort, retry} = useSearch(term);
 
+  const renderTooShort = () => {
+    if (!tooShort) return null;
+    return <Text style={styles.hint}>Escribe al menos 2 caracteres</Text>;
+  }
+
+  const renderIsLoading = () => {
+    if (!isLoading) return null;
+    return <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />;
+  }
+
+  const renderEmpty = () => {
+    if (movies.length > 0) return null;
+    return <Text style={styles.hint}>Sin resultados</Text>;
+  }
+
+  const renderError = () => {
+    if (!error) return null;
+    return <ErrorState message={error} onRetry={retry} />;
+  }
+
+  const renderContent = () => {
+    if (tooShort) return renderTooShort();
+    if (error) return renderError();
+    if (isLoading) return renderIsLoading();
+    if (movies.length === 0) return renderEmpty();
+    return (
+      <FlatList
+        data={movies}
+        keyExtractor={item => item.id.toString()}
+        numColumns={2}
+        renderItem={({item}) => (
+          <MoviePoster movie={item} width={160} height={240} />
+        )}
+      />
+    );
+  }
+
   return (
-    <View style={[styles.screen, {paddingTop: top + 12}]}>
+    <SafeAreaView style={styles.screen} edges={['top', 'bottom']} >
       <View style={styles.bar}>
         <Text onPress={() => navigation.goBack()} style={styles.back}>
           Regresar
@@ -38,24 +74,8 @@ export const SearchScreen = ({navigation}: Props) => {
         />
       </View>
 
-      {tooShort ? (
-        <Text style={styles.hint}>Escribe al menos 2 caracteres</Text>
-      ) : error ? (
-        <ErrorState message={error} onRetry={retry} />
-      ) : isLoading ? (
-        <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
-      ) : (
-        <FlatList
-          data={movies}
-          keyExtractor={item => item.id.toString()}
-          numColumns={2}
-          ListEmptyComponent={<Text style={styles.hint}>Sin resultados</Text>}
-          renderItem={({item}) => (
-            <MoviePoster movie={item} width={160} height={240} />
-          )}
-        />
-      )}
-    </View>
+      {renderContent()}
+    </SafeAreaView>
   );
 };
 

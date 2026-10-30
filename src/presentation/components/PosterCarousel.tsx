@@ -9,19 +9,32 @@ interface Props {
 }
 
 export const PosterCarousel = ({height = 440, movies}: Props) => {
+
+  const renderIsEmpty = () => {
+    if (movies.length !== 0) return null;
+    return <Text style={styles.empty}>No hay películas</Text>;
+  };
+
+  const renderMovies = () => {
+    if (movies.length === 0) return null;
+    return (
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      >
+        {movies.map(movie => (
+          <View key={movie.id}>
+            <MoviePoster movie={movie} />
+          </View>
+        ))}
+      </ScrollView>
+    );
+  };
+
   return (
     <View style={{height}}>
-      {movies.length === 0 ? (
-        <Text style={styles.empty}>No hay películas</Text>
-      ) : (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {movies.map(movie => (
-            <View key={movie.id}>
-              <MoviePoster movie={movie} />
-            </View>
-          ))}
-        </ScrollView>
-      )}
+      {renderIsEmpty()}
+      {renderMovies()}
     </View>
   );
 };

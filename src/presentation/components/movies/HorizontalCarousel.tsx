@@ -10,29 +10,44 @@ interface Props {
 }
 
 export const HorizontalCarousel = ({movies, title, loadMore}: Props) => {
+  const isEmpty = movies.length === 0;
+
+  const renderTitle = () => {
+    if (!title) return null;
+    return <Text style={styles.title}>{title}</Text>;
+  };
+
+  const renderIsEmpty = () => {
+    if (!isEmpty) return null;
+    return <Text style={styles.empty}>No hay películas</Text>;
+  };
+
+  const renderMoviesCarousel = () => {
+    if (isEmpty) return null;
+    return (
+      <FlatList
+        data={movies}
+        renderItem={({item}) => (
+          <MoviePoster movie={item} width={140} height={200} />
+        )}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        onEndReached={() => {
+          if (loadMore && movies.length > 0) {
+            loadMore();
+          }
+        }}
+        onEndReachedThreshold={0.6}
+      />
+    );
+  };
+
   return (
     <View style={styles.container}>
-      {title ? <Text style={styles.title}>{title}</Text> : null}
-
-      {movies.length === 0 ? (
-        <Text style={styles.empty}>No hay películas</Text>
-      ) : (
-        <FlatList
-          data={movies}
-          renderItem={({item}) => (
-            <MoviePoster movie={item} width={140} height={200} />
-          )}
-          keyExtractor={(item, index) => `${item.id}-${index}`}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          onEndReached={() => {
-            if (loadMore && movies.length > 0) {
-              loadMore();
-            }
-          }}
-          onEndReachedThreshold={0.6}
-        />
-      )}
+      {renderTitle()}
+      {renderIsEmpty()}
+      {renderMoviesCarousel()}
     </View>
   );
 };

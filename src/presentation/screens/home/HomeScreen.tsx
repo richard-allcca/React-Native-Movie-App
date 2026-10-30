@@ -33,6 +33,15 @@ export const HomeScreen = () => {
     return <ErrorState message={error} onRetry={retry} />;
   }
 
+  const renderPartialError = () => {
+    if (!partialError) return null;
+    return (
+      <Pressable onPress={retry} style={styles.partialError}>
+        <Text>{partialError}</Text>
+      </Pressable>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <ScrollView
@@ -45,11 +54,7 @@ export const HomeScreen = () => {
           <Text style={styles.searchText}>Buscar películas</Text>
         </Pressable>
 
-        {partialError ? (
-          <Pressable onPress={retry} style={styles.partialError}>
-            <Text>{partialError}</Text>
-          </Pressable>
-        ) : null}
+        {renderPartialError()}
 
         <PosterCarousel movies={nowPlaying} />
         <HorizontalCarousel

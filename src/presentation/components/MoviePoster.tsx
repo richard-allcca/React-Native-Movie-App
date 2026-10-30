@@ -15,6 +15,13 @@ export const MoviePoster = ({movie, height = 420, width = 300}: Props) => {
   const navigation = useNavigation<NavigationProp<RootStackParams>>();
   const uri = movieImageUri(movie.posterPath, 'w300');
 
+  const renderImage = () => {
+    if (uri) {
+      return <Image style={styles.image} source={{uri}} />;
+    }
+    return <View style={[styles.image, styles.placeholder]} />;
+  };
+
   return (
     <Pressable
       onPress={() => navigation.navigate('Details', {movieId: movie.id})}
@@ -28,11 +35,7 @@ export const MoviePoster = ({movie, height = 420, width = 300}: Props) => {
         opacity: pressed ? 0.9 : 1,
       })}>
       <View style={styles.image}>
-        {uri ? (
-          <Image style={styles.image} source={{uri}} />
-        ) : (
-          <View style={[styles.image, styles.placeholder]} />
-        )}
+        {renderImage()}
       </View>
     </Pressable>
   );
